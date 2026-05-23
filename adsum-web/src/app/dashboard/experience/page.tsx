@@ -90,9 +90,7 @@ export default function ExperiencePage() {
     return {
       ...style,
       transform: isDragging && dragTransform ? `${dragTransform} scale(1.02)` : dragTransform,
-      transition: style?.transition
-        ? `${style.transition}, box-shadow 160ms cubic-bezier(0.22, 1, 0.36, 1), filter 120ms ease-out`
-        : 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 160ms cubic-bezier(0.22, 1, 0.36, 1)',
+      transition: style?.transition,
       zIndex: isDragging ? 60 : style?.zIndex,
     };
   };
@@ -137,7 +135,7 @@ export default function ExperiencePage() {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         style={getDnDCardStyle(provided.draggableProps.style, snapshot.isDragging)}
-                        className={`glass rounded-2xl p-5 group transition-[transform,box-shadow,filter] duration-200 ease-out ${
+                        className={`glass rounded-2xl p-5 group transition-[box-shadow,filter,background-color,border-color] duration-200 ease-out ${
                           snapshot.isDragging
                             ? 'shadow-elevated ring-2 ring-foreground/20 brightness-[1.02]'
                             : 'hover:shadow-elevated'

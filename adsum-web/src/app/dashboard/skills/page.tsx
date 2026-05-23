@@ -104,9 +104,7 @@ export default function SkillsPage() {
     return {
       ...style,
       transform: isDragging && dragTransform ? `${dragTransform} scale(1.02)` : dragTransform,
-      transition: style?.transition
-        ? `${style.transition}, box-shadow 160ms cubic-bezier(0.22, 1, 0.36, 1), filter 120ms ease-out`
-        : 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 160ms cubic-bezier(0.22, 1, 0.36, 1)',
+      transition: style?.transition,
       zIndex: isDragging ? 60 : style?.zIndex,
     };
   };
@@ -143,7 +141,7 @@ export default function SkillsPage() {
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="skills">
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-col gap-2.5 max-w-3xl">
                 {skills.map((skill, i) => (
                   <Draggable key={skill.id} draggableId={skill.id} index={i}>
                     {(provided, snapshot) => (
@@ -151,26 +149,48 @@ export default function SkillsPage() {
                         ref={provided.innerRef} 
                         {...provided.draggableProps}
                         style={getDnDCardStyle(provided.draggableProps.style, snapshot.isDragging)}
-                        className={`glass p-5 rounded-2xl group transition-[transform,box-shadow,filter] duration-200 ease-out ${
+                        className={`glass px-5 py-3.5 rounded-2xl group transition-[box-shadow,filter,background-color,border-color] duration-200 ease-out flex items-center gap-4 ${
                           snapshot.isDragging
                             ? 'shadow-elevated ring-2 ring-foreground/20 brightness-[1.02]'
                             : 'hover:shadow-elevated'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <div
-                              {...provided.dragHandleProps}
-                              className={`transition-colors text-muted/20 group-hover:text-muted -ml-1 ${
-                                snapshot.isDragging
-                                  ? 'cursor-grabbing text-foreground'
-                                  : 'cursor-grab hover:text-foreground'
-                              }`}
-                            >
-                              <GripVertical className="w-4 h-4" />
-                            </div>
-                            <h3 className="font-semibold text-sm text-foreground">{skill.name}</h3>
+                        {/* Drag Handle */}
+                        <div
+                          {...provided.dragHandleProps}
+                          className={`transition-colors text-muted/20 group-hover:text-muted shrink-0 ${
+                            snapshot.isDragging
+                              ? 'cursor-grabbing text-foreground'
+                              : 'cursor-grab hover:text-foreground'
+                          }`}
+                        >
+                          <GripVertical className="w-4 h-4" />
+                        </div>
+
+                        {/* Skill Info */}
+                        <div className="w-[180px] shrink-0 min-w-0">
+                          <h3 className="font-semibold text-sm text-foreground truncate mb-1">{skill.name}</h3>
+                          <span className={`inline-block text-[9px] px-2 py-0.5 rounded-full border font-medium ${CATEGORY_COLORS[skill.category] || CATEGORY_COLORS.General}`}>
+                            {skill.category || 'General'}
+                          </span>
+                        </div>
+
+                        {/* Proficiency Bar */}
+                        <div className="flex-1 min-w-0 flex items-center gap-3">
+                          <div className="relative flex-1 h-1.5 bg-background rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${skill.proficiency || 0}%` }}
+                              transition={{ duration: 0.8, delay: i * 0.05 }}
+                              className="absolute inset-y-0 left-0 rounded-full"
+                              style={{ backgroundColor: proficiencyColor(skill.proficiency || 0) }}
+                            />
                           </div>
+                          <span className="text-[11px] font-semibold text-muted w-8 shrink-0 text-right">{skill.proficiency || 0}%</span>
+                        </div>
+
+                        {/* Actions (Delete button) */}
+                        <div className="shrink-0 flex items-center">
                           <button onClick={() => handleDelete(skill.id)}
                             className={`p-1.5 rounded-lg hover:bg-red-50 text-muted hover:text-red-500 transition-all ${
                               snapshot.isDragging ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
@@ -178,21 +198,6 @@ export default function SkillsPage() {
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
-                        </div>
-                        <div className="relative h-1.5 bg-background rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${skill.proficiency || 0}%` }}
-                            transition={{ duration: 0.8, delay: i * 0.05 }}
-                            className="absolute inset-y-0 left-0 rounded-full"
-                            style={{ backgroundColor: proficiencyColor(skill.proficiency || 0) }}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${CATEGORY_COLORS[skill.category] || CATEGORY_COLORS.General}`}>
-                            {skill.category || 'General'}
-                          </span>
-                          <span className="text-[11px] text-muted">{skill.proficiency || 0}%</span>
                         </div>
                       </div>
                     )}
