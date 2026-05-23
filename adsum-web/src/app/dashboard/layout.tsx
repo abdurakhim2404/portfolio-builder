@@ -122,20 +122,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen flex bg-background">
       {/* ═══ Sidebar ═══ */}
-      <aside className={`${collapsed ? 'w-[76px]' : 'w-[264px]'} bg-sidebar flex flex-col h-screen sticky top-0 shrink-0 z-20 transition-all duration-300 ease-in-out`}>
+      <aside className={`${collapsed ? 'w-[76px]' : 'w-[264px]'} glass-frost-dark border-r border-y-0 border-l-0 border-white/[0.05] shadow-elevated flex flex-col h-screen sticky top-0 shrink-0 z-20 transition-all duration-300 ease-in-out`}>
         {/* Header */}
         <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} px-5 pt-6 pb-5`}>
           {!collapsed && (
-            <Link href="/" className="flex items-center gap-2.5 text-lg font-bold tracking-tighter text-white">
-              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
-                <AdsumLogo className="w-4 h-4" />
+            <Link href="/" className="flex items-center gap-2.5 text-lg font-bold tracking-tighter text-white group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-white/[0.08] to-white/[0.02] border border-white/[0.08] flex items-center justify-center relative overflow-hidden transition-colors group-hover:border-white/[0.18] shadow-soft">
+                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <AdsumLogo className="w-4 h-4 text-white relative z-10 transition-transform duration-300 group-hover:scale-110" />
               </div>
-              Adsum
+              <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent group-hover:text-white transition-colors">
+                Adsum
+              </span>
             </Link>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className={`w-9 h-9 rounded-xl flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all ${collapsed ? '' : ''}`}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.04] transition-all"
           >
             {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </button>
@@ -144,7 +147,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Navigation */}
         <nav className="flex-1 px-3 overflow-y-auto styled-scrollbar">
           {!collapsed && (
-            <div className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.15em] mb-2 px-3">
+            <div className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.2em] mb-3 px-3">
               Menu
             </div>
           )}
@@ -155,95 +158,187 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-3'} py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 relative group ${
+                  className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-3'} py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 relative group active:scale-[0.98] ${
                     isActive
-                      ? 'bg-white/15 text-white'
-                      : 'text-white/50 hover:text-white hover:bg-white/8'
+                      ? 'text-white font-semibold'
+                      : 'text-white/50 hover:text-white/90'
                   }`}
                   title={collapsed ? link.name : undefined}
                 >
                   {isActive && (
                     <motion.div
-                      layoutId="sidebar-active"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-white rounded-r-full"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                      layoutId="active-nav-pill"
+                      className="absolute inset-0 bg-gradient-to-r from-white/[0.07] to-white/[0.02] border border-white/[0.05] rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
-                  <link.icon className="w-[18px] h-[18px] shrink-0" />
-                  {!collapsed && <span className="flex-1">{link.name}</span>}
-                  {!collapsed && isActive && <ChevronRight className="w-3.5 h-3.5 opacity-40" />}
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-nav-glow-indicator"
+                      className="absolute left-0 w-[3px] h-5 bg-gradient-to-b from-indigo-400 to-purple-500 rounded-r-full shadow-[0_0_8px_rgba(129,140,248,0.5)]"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <link.icon className={`w-[18px] h-[18px] shrink-0 transition-all duration-200 group-hover:scale-110 relative z-10 ${
+                    isActive ? 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]' : 'text-white/40 group-hover:text-white/70'
+                  }`} />
+                  {!collapsed && <span className="flex-1 relative z-10 transition-colors duration-200">{link.name}</span>}
+                  {!collapsed && isActive && <ChevronRight className="w-3.5 h-3.5 opacity-40 relative z-10 shrink-0" />}
+                  {collapsed && (
+                    <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-900 border border-white/5 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-elevated pointer-events-none">
+                      {link.name}
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-900 rotate-45 border-l border-b border-white/5" />
+                    </div>
+                  )}
                 </Link>
               );
             })}
           </div>
 
           {/* Portfolio Link */}
-          <div className={`mt-6 ${collapsed ? 'px-0' : ''}`}>
+          <div className={`mt-6 ${collapsed ? 'px-0 space-y-1' : 'px-3'}`}>
             {!collapsed && (
-              <div className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.15em] mb-2 px-3">
+              <div className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.2em] mb-3 px-3">
                 Quick Links
               </div>
             )}
-            <a
-              href={`/u/${username}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-3'} py-2.5 rounded-xl text-[13px] font-medium text-white/50 hover:text-white hover:bg-white/8 transition-all`}
-              title={collapsed ? 'View Portfolio' : undefined}
-            >
-              <Globe className="w-[18px] h-[18px] shrink-0" />
-              {!collapsed && (
-                <>
-                  <span className="flex-1">View Portfolio</span>
-                  <ExternalLink className="w-3 h-3 opacity-40" />
-                </>
-              )}
-            </a>
+            {!collapsed ? (
+              <a
+                href={`/u/${username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col p-4 rounded-2xl bg-gradient-to-br from-indigo-950/30 via-purple-950/10 to-transparent border border-indigo-500/10 hover:border-indigo-500/25 transition-all duration-300 relative overflow-hidden shadow-soft active:scale-[0.98]"
+              >
+                {/* Ambient glowing radial light */}
+                <div className="absolute -top-12 -right-12 w-24 h-24 bg-gradient-to-br from-indigo-500/15 to-purple-500/15 rounded-full blur-xl pointer-events-none transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 text-indigo-400 group-hover:scale-105 transition-transform duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
+                    <Globe className="w-4 h-4" />
+                  </div>
+                  <span className="text-xs font-semibold text-white/80 tracking-wide flex-1 group-hover:text-white transition-colors">
+                    View Portfolio
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 text-white/30 group-hover:text-indigo-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                </div>
+                <p className="text-[11px] text-white/40 leading-relaxed group-hover:text-white/50 transition-colors">
+                  Open your live portfolio website in a new tab.
+                </p>
+              </a>
+            ) : (
+              <a
+                href={`/u/${username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex justify-center p-3 rounded-xl text-white/40 hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.04] transition-all relative group active:scale-[0.98]"
+              >
+                <Globe className="w-[18px] h-[18px] shrink-0" />
+                <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-900 border border-white/5 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-elevated pointer-events-none">
+                  View Portfolio
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-900 rotate-45 border-l border-b border-white/5" />
+                </div>
+              </a>
+            )}
           </div>
         </nav>
 
         {/* Bottom Section */}
-        <div className="p-3 border-t border-white/8 space-y-1">
+        <div className="p-3 border-t border-white/[0.06] space-y-1">
           <Link
+            key="settings-link"
             href="/dashboard/settings"
-            className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-3'} py-2.5 rounded-xl text-[13px] font-medium transition-all ${
+            className={`flex items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-3'} py-2.5 rounded-xl text-[13px] font-medium transition-all relative group active:scale-[0.98] ${
               pathname === '/dashboard/settings'
-                ? 'bg-white/15 text-white'
-                : 'text-white/50 hover:text-white hover:bg-white/8'
+                ? 'text-white font-semibold'
+                : 'text-white/50 hover:text-white'
             }`}
             title={collapsed ? 'Settings' : undefined}
           >
-            <Settings className="w-[18px] h-[18px]" />
-            {!collapsed && <span>Settings</span>}
+            {pathname === '/dashboard/settings' && (
+              <motion.div
+                layoutId="active-nav-pill"
+                className="absolute inset-0 bg-gradient-to-r from-white/[0.07] to-white/[0.02] border border-white/[0.05] rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]"
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
+            {pathname === '/dashboard/settings' && (
+              <motion.div
+                layoutId="active-nav-glow-indicator"
+                className="absolute left-0 w-[3px] h-5 bg-gradient-to-b from-indigo-400 to-purple-500 rounded-r-full shadow-[0_0_8px_rgba(129,140,248,0.5)]"
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
+            <Settings className={`w-[18px] h-[18px] transition-transform duration-200 group-hover:scale-110 relative z-10 ${
+              pathname === '/dashboard/settings' ? 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]' : 'text-white/40 group-hover:text-white/70'
+            }`} />
+            {!collapsed && <span className="flex-1 relative z-10">Settings</span>}
+            {collapsed && (
+              <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-900 border border-white/5 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-elevated pointer-events-none">
+                Settings
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-900 rotate-45 border-l border-b border-white/5" />
+              </div>
+            )}
           </Link>
 
           <button
             onClick={() => { logout(); router.push('/'); }}
-            className={`w-full flex items-center gap-3 ${collapsed ? 'justify-center px-0' : 'px-3'} py-2.5 text-[13px] font-medium text-red-400/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all`}
+            className="w-full flex items-center gap-3 p-3 text-[13px] font-medium text-red-400/70 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/10 rounded-xl transition-all relative group active:scale-[0.98]"
             title={collapsed ? 'Sign Out' : undefined}
           >
-            <LogOut className="w-[18px] h-[18px]" />
+            <LogOut className="w-[18px] h-[18px] text-red-400/50 group-hover:text-red-400 transition-transform duration-200 group-hover:scale-110" />
             {!collapsed && <span>Sign Out</span>}
+            {collapsed && (
+              <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-900 border border-white/5 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-elevated pointer-events-none">
+                Sign Out
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-900 rotate-45 border-l border-b border-white/5" />
+              </div>
+            )}
           </button>
         </div>
 
-        {/* User */}
-        <div className={`p-3 border-t border-white/8 ${collapsed ? 'flex justify-center' : ''}`}>
-          <div className={`flex items-center gap-3 ${collapsed ? '' : 'px-2'}`}>
-            <div className="w-9 h-9 rounded-xl overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shrink-0">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover" />
-              ) : (
-                initials
-              )}
-            </div>
-            {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate text-white">{fullName}</p>
-                <p className="text-[11px] text-white/40 truncate">@{username}</p>
+        {/* User Profile */}
+        <div className={`p-3 border-t border-white/[0.06] ${collapsed ? 'flex justify-center' : ''}`}>
+          {!collapsed ? (
+            <div className="p-2.5 rounded-2xl bg-white/[0.02] border border-white/[0.04] flex items-center gap-3 transition-colors hover:bg-white/[0.04] hover:border-white/[0.07]">
+              {/* Pulsing Avatar Wrapper */}
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[1.2px] shadow-lg flex items-center justify-center shrink-0 relative group/avatar">
+                <div className="w-full h-full rounded-[10px] overflow-hidden bg-slate-950 flex items-center justify-center">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover transition-transform duration-500 group-hover/avatar:scale-110" />
+                  ) : (
+                    <span className="text-white font-bold text-xs">{initials}</span>
+                  )}
+                </div>
+                {/* Active Session Pulsing Pulse Dot */}
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#12121e] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]">
+                  <span className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75" />
+                </span>
               </div>
-            )}
-          </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold truncate text-white leading-none mb-1">{fullName}</p>
+                <p className="text-[10px] text-white/40 truncate">@{username}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="relative group flex justify-center">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[1.2px] shadow-lg flex items-center justify-center shrink-0 relative active:scale-[0.98] transition-transform">
+                <div className="w-full h-full rounded-[10px] overflow-hidden bg-slate-950 flex items-center justify-center">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-white font-bold text-xs">{initials}</span>
+                  )}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#12121e] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]">
+                  <span className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75" />
+                </span>
+              </div>
+              <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-900 border border-white/5 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-elevated pointer-events-none">
+                <p className="font-semibold text-white">{fullName}</p>
+                <p className="text-[10px] text-white/40">@{username}</p>
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-900 rotate-45 border-l border-b border-white/5" />
+              </div>
+            </div>
+          )}
         </div>
       </aside>
 

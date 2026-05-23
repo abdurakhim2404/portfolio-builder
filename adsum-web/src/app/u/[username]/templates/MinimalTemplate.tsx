@@ -1,9 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ExternalLink, Mail, Star, Briefcase, Code2, Quote } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import ContactForm from '../ContactForm';
+import AnimatedSection from '@/components/AnimatedSection';
 
 interface MinimalTemplateProps {
   profile: any;
@@ -23,11 +23,7 @@ export default function MinimalTemplate({ profile, username }: MinimalTemplatePr
     <div className="min-h-screen bg-white text-slate-900">
       {/* Minimal Header */}
       <header className="max-w-3xl mx-auto px-8 pt-20 pb-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <AnimatedSection direction="up" duration={0.5}>
           <h1 className="text-5xl md:text-6xl font-light tracking-tight mb-4">
             {profile.full_name || profile.username}
           </h1>
@@ -55,7 +51,7 @@ export default function MinimalTemplate({ profile, username }: MinimalTemplatePr
               </a>
             )}
           </div>
-        </motion.div>
+        </AnimatedSection>
       </header>
 
       <main className="max-w-3xl mx-auto px-8 pb-20 space-y-16">
@@ -65,11 +61,10 @@ export default function MinimalTemplate({ profile, username }: MinimalTemplatePr
             <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-8">Experience</h2>
             <div className="space-y-8">
               {profile.experiences.map((exp: any, i: number) => (
-                <motion.div
+                <AnimatedSection
                   key={exp.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
+                  direction="up"
+                  delay={i * 0.1}
                   className="group"
                 >
                   <div className="flex items-baseline justify-between mb-2">
@@ -84,7 +79,7 @@ export default function MinimalTemplate({ profile, username }: MinimalTemplatePr
                       {stripHtml(exp.description)}
                     </p>
                   )}
-                </motion.div>
+                </AnimatedSection>
               ))}
             </div>
           </section>
@@ -96,11 +91,10 @@ export default function MinimalTemplate({ profile, username }: MinimalTemplatePr
             <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-8">Projects</h2>
             <div className="space-y-6">
               {profile.projects.map((project: any, i: number) => (
-                <motion.div
+                <AnimatedSection
                   key={project.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
+                  direction="up"
+                  delay={i * 0.1}
                   className="group border-b border-slate-100 pb-6 last:border-0"
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -132,7 +126,7 @@ export default function MinimalTemplate({ profile, username }: MinimalTemplatePr
                       ))}
                     </div>
                   )}
-                </motion.div>
+                </AnimatedSection>
               ))}
             </div>
           </section>

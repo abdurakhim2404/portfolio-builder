@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   ExternalLink,
   Mail,
@@ -14,6 +14,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import ContactForm from '../ContactForm';
+import AnimatedSection from '@/components/AnimatedSection';
+import LazyImage from '@/components/LazyImage';
+import { SpotlightCard } from '@/components/SpotlightCard';
 
 interface ProfessionalTemplateProps {
   profile: any;
@@ -31,6 +34,7 @@ export default function ProfessionalTemplate({ profile, username }: Professional
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [expandedDescriptions, setExpandedDescriptions] = useState<Record<string, boolean>>({});
+  const shouldReduceMotion = useReducedMotion();
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
@@ -122,29 +126,31 @@ export default function ProfessionalTemplate({ profile, username }: Professional
         <div className="max-w-5xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             {/* Avatar */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
+            <AnimatedSection
+              direction="fade"
+              duration={0.5}
             >
               {profile.avatar_url ? (
-                <img
+                <LazyImage
                   src={profile.avatar_url}
                   alt={profile.full_name}
-                  className="w-28 h-28 rounded-lg object-cover shadow-lg"
+                  fallbackType="avatar"
+                  priority={true}
+                  className="w-28 h-28 rounded-lg"
+                  imgClassName="w-28 h-28 rounded-lg object-cover shadow-lg"
                 />
               ) : (
                 <div className="w-28 h-28 rounded-lg bg-slate-200 flex items-center justify-center text-slate-400 text-3xl font-bold">
                   {profile.full_name?.charAt(0) || profile.username?.charAt(0)}
                 </div>
               )}
-            </motion.div>
+            </AnimatedSection>
             
             {/* Info */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+            <AnimatedSection
+              direction="up"
+              delay={0.2}
+              duration={0.5}
               className="flex-1"
             >
               <h1 className="text-3xl font-bold text-slate-900 mb-2">
@@ -168,13 +174,12 @@ export default function ProfessionalTemplate({ profile, username }: Professional
                   Available for remote work
                 </span>
               </div>
-            </motion.div>
+            </AnimatedSection>
             
             {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
+            <AnimatedSection
+              direction="left"
+              delay={0.3}
               className="flex gap-8 text-center"
             >
               <div>
@@ -189,7 +194,7 @@ export default function ProfessionalTemplate({ profile, username }: Professional
                 <div className="text-2xl font-bold text-slate-900">{profile.skills?.length || 0}</div>
                 <div className="text-xs text-slate-500 uppercase tracking-wide">Skills</div>
               </div>
-            </motion.div>
+            </AnimatedSection>
           </div>
         </div>
       </header>
@@ -207,14 +212,16 @@ export default function ProfessionalTemplate({ profile, username }: Professional
                 </h2>
                 <div className="space-y-6">
                   {profile.experiences.map((exp: any, i: number) => (
-                    <motion.div
+                    <AnimatedSection
                       key={exp.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="bg-white rounded-lg p-6 border border-slate-200 shadow-sm"
+                      direction="up"
+                      delay={i * 0.1}
                     >
-                      <div className="flex items-start justify-between mb-2">
+                      <SpotlightCard
+                        spotlightColor="rgba(59, 130, 246, 0.06)"
+                        className="bg-white rounded-lg p-6 border border-slate-200 shadow-sm text-slate-700 hover:border-slate-300 transition-all"
+                      >
+                        <div className="flex items-start justify-between mb-2">
                         <h3 className="font-semibold text-slate-900">{exp.role}</h3>
                         <span className="text-xs text-slate-500 flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
@@ -227,7 +234,8 @@ export default function ProfessionalTemplate({ profile, username }: Professional
                           {getDescriptionText(exp.description)}
                         </p>
                       )}
-                    </motion.div>
+                      </SpotlightCard>
+                    </AnimatedSection>
                   ))}
                 </div>
               </section>
@@ -277,16 +285,18 @@ export default function ProfessionalTemplate({ profile, username }: Professional
                       const canExpandDescription = descriptionText.length > 170;
 
                       return (
-                    <motion.div
+                    <AnimatedSection
                       key={project.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className={`bg-white rounded-lg overflow-hidden border border-slate-200 shadow-sm group hover:shadow-md transition-shadow ${
-                        projectGallery.length > 0 ? 'cursor-zoom-in' : ''
-                      }`}
+                      direction="up"
+                      delay={i * 0.1}
                     >
-                      {(project.image_url || project.images?.length > 0) && (
+                      <SpotlightCard
+                        spotlightColor="rgba(59, 130, 246, 0.06)"
+                        className={`bg-white rounded-lg overflow-hidden border border-slate-200 shadow-sm group hover:border-slate-300 hover:shadow-md transition-all ${
+                          projectGallery.length > 0 ? 'cursor-zoom-in' : ''
+                        }`}
+                      >
+                        {(project.image_url || project.images?.length > 0) && (
                         <div
                           className={`h-48 overflow-hidden bg-slate-100 ${
                             projectGallery.length > 0 ? 'cursor-zoom-in' : ''
@@ -298,19 +308,19 @@ export default function ProfessionalTemplate({ profile, username }: Professional
                               isQuarterTurn(primaryRotation) ? 'flex items-center justify-center bg-slate-100' : ''
                             }`}
                           >
-                            <img
+                            <LazyImage
                               src={project.image_url || project.images[0]?.image_url}
                               alt={project.title}
-                              className={`w-full h-full transition-transform duration-500 ${
+                              fallbackType="project"
+                              flipHorizontal={primaryFlipHorizontal}
+                              flipVertical={primaryFlipVertical}
+                              rotationDegrees={primaryRotation}
+                              className="w-full h-full"
+                              imgClassName={`w-full h-full transition-transform duration-500 ${
                                 isQuarterTurn(primaryRotation)
                                   ? 'object-contain group-hover:scale-[1.02]'
                                   : 'object-cover group-hover:scale-105'
                               }`}
-                              style={getImageTransformStyle(
-                                primaryFlipHorizontal,
-                                primaryFlipVertical,
-                                primaryRotation,
-                              )}
                             />
                           </div>
                         </div>
@@ -373,7 +383,8 @@ export default function ProfessionalTemplate({ profile, username }: Professional
                           )}
                         </div>
                       </div>
-                    </motion.div>
+                      </SpotlightCard>
+                    </AnimatedSection>
                       );
                     })()
                   ))}
@@ -441,15 +452,15 @@ export default function ProfessionalTemplate({ profile, username }: Professional
             </button>
           )}
 
-          <img
+          <LazyImage
             src={galleryImages[currentImageIndex]?.url}
             alt="Project screenshot"
-            className="max-w-full max-h-[85vh] object-contain rounded-xl"
-            style={getImageTransformStyle(
-              galleryImages[currentImageIndex]?.flip_horizontal,
-              galleryImages[currentImageIndex]?.flip_vertical,
-              galleryImages[currentImageIndex]?.rotation_degrees,
-            )}
+            className="max-w-full max-h-[85vh]"
+            imgClassName="max-w-full max-h-[85vh] object-contain rounded-xl"
+            fallbackType="project"
+            flipHorizontal={galleryImages[currentImageIndex]?.flip_horizontal}
+            flipVertical={galleryImages[currentImageIndex]?.flip_vertical}
+            rotationDegrees={galleryImages[currentImageIndex]?.rotation_degrees}
             onClick={(e) => e.stopPropagation()}
           />
 
