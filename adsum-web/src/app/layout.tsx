@@ -13,8 +13,6 @@ export const metadata: Metadata = {
   description: 'Create lightning-fast, highly optimized professional portfolios and developer resumes instantly.',
 };
 
-import SkipToContent from '@/components/SkipToContent';
-
 export default function RootLayout({
   children,
 }: {
@@ -23,8 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning className={`${outfit.variable} font-sans antialiased text-foreground bg-background selection:bg-primary/20 min-h-screen flex flex-col`}>
-        <SkipToContent />
-        <main id="main-content" className="flex-1 flex flex-col relative">
+        <main className="flex-1 flex flex-col relative">
           {children}
         </main>
       </body>
